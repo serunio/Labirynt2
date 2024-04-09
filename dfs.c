@@ -49,6 +49,8 @@ int DFS(FILE* f, int xLabiryntu, int* aktywnaKomorka, int zwrot, char** wiersz)
             aktywnaKomorka[0]=y; aktywnaKomorka[1]=x;
             PobierzWiersz(f, xLabiryntu, aktywnaKomorka[0], wiersz);
         }
+
+        //obrót w lewo
         zwrot--;
     }
     return 0;
