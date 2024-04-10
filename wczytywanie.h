@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 //nie musisz rozumiec tego
-#define USTAW_PRZEJSCIE(i,j) bufor[i][j] = ((c = fgetc(f)) == '\n') ? 'n' : c
+#define USTAW_PRZEJSCIE(i,j) bufor[i][j] = fgetc(f)
 #define ZAPISZ_SASIADOW(i)\
 	{\
 		USTAW_PRZEJSCIE(i,1);/*prawo*/\

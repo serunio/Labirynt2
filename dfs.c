@@ -22,10 +22,8 @@ int DFS(FILE* f, int xLabiryntu, int* aktywnaKomorka, int zwrot, char** wiersz)
 
     for(int i = 0; i<=2; i++)
     {
-
         if (wiersz[aktywnaKomorka[1]][zwrot % 4] == ' ')
         {
-
             switch(zwrot%4)
             {
                 case 0:
