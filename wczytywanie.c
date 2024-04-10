@@ -8,8 +8,6 @@
 
 void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor)
 {
-    char c;
-
     fseek(f, 2*(1+2*aktywnyWiersz)*(xLabiryntu+1)+2, SEEK_SET);
     for(int i = 0; i < xLabiryntu; i++)
     {
