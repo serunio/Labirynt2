@@ -22,6 +22,7 @@
 
 void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor);
 int PobierzSzerokosc(FILE* in);
+int PobierzWysokosc(FILE* in);
 
 ///Do zrobienia (dla plików binarnych):
 ///PobierzWierszB()

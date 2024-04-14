@@ -9,6 +9,7 @@ int main()
 
     //pobranie szerokosci labiryntu
     int xLabiryntu = PobierzSzerokosc(in);
+    int yLabiryntu = PobierzWysokosc(in);
 
     //macierz buforujaca czesc labiryntu, w ktorej:
     //y - komorki w rzedzie
@@ -18,13 +19,15 @@ int main()
         //góra, prawo, lewo, dół
         matrix[i] = malloc(4*sizeof(char));
 
-    int aktywnaKomorka[2] = {0,0}; //położenie y,x
+    int aktywnaKomorka[2] = {yLabiryntu-1,xLabiryntu-1}; //położenie y,x
 
     //reszta z dzielenia przez 4 ze zwrot to kierunek w którym patrzy program
     //0 - góra, 1 - prawo, 2 - dół, 3 - lewo
-    int zwrot = 4001;
+    int zwrot = 4003;
+    int droga = 0;
+    DFS(in, xLabiryntu, aktywnaKomorka, zwrot, &droga, matrix);
+    printf("FORWARD %i \n", droga);
 
-    DFS(in, xLabiryntu, aktywnaKomorka, zwrot, matrix);
 
     fclose(in);
     for(int i = 0; i < xLabiryntu; i++)

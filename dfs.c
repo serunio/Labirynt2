@@ -6,14 +6,14 @@
 #include "wczytywanie.h"
 #include <stdio.h>
 
-int DFS(FILE* f, int xLabiryntu, int* aktywnaKomorka, int zwrot, char** wiersz)
+int DFS(FILE* f, int xLabiryntu, int* aktywnaKomorka, int zwrot, int* droga, char** wiersz)
 {
 
     PobierzWiersz(f, xLabiryntu, aktywnaKomorka[0], wiersz);
-    int x = aktywnaKomorka[1], y = aktywnaKomorka[0];
-    if (wiersz[ aktywnaKomorka[1] ][ 1 ] == 'K')
+    int x = aktywnaKomorka[1], y = aktywnaKomorka[0], zwrot0 = zwrot;
+    if (wiersz[ aktywnaKomorka[1] ][ 3 ] == 'P')
     {
-        printf("[%d %d] ", x, y);
+        //printf("[%d %d] ", x, y);
         return 1;
     }
 
@@ -39,9 +39,28 @@ int DFS(FILE* f, int xLabiryntu, int* aktywnaKomorka, int zwrot, char** wiersz)
                     aktywnaKomorka[1]--;
                     break;
             }
-            if(DFS(f, xLabiryntu, aktywnaKomorka, zwrot, wiersz))
+            if(DFS(f, xLabiryntu, aktywnaKomorka, zwrot, droga, wiersz))
             {
-                printf("[%d %d] ", x, y);
+                (*droga)++;
+                //printf("%i ", *droga);
+                switch(zwrot0-zwrot)
+                {
+                    case -1:
+                        printf("FORWARD %i \n", *droga);
+                        *droga=0;
+                        printf("TURN LEFT \n");
+
+                        break;
+                    case 1:
+                        printf("FORWARD %i \n", *droga);
+                        *droga=0;
+                        printf("TURN RIGTH \n");
+
+                        break;
+                    default:
+                        ;
+                }
+                //printf("[%d %d] ", x, y);
                 return 1;
             }
             aktywnaKomorka[0]=y; aktywnaKomorka[1]=x;

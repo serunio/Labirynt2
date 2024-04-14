@@ -27,3 +27,14 @@ int PobierzSzerokosc(FILE* in)
     xLabiryntu /= 2;
     return xLabiryntu;
 }
+
+int PobierzWysokosc(FILE* in)
+{
+    int yLabiryntu = 1;
+    int c;
+    while((c=fgetc(in))!=EOF)
+        if(c=='\n') yLabiryntu++;
+    yLabiryntu -= 1;
+    yLabiryntu /= 2;
+    return yLabiryntu;
+}
