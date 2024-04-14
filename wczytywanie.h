@@ -23,4 +23,8 @@
 void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor);
 int PobierzSzerokosc(FILE* in);
 
+///Do zrobienia (dla plików binarnych):
+///PobierzWierszB()
+///PobierzWymiaryISymboleB() (symbole ścian i przejść)
+
 #endif //LABIRYNT2_WCZYTYWANIE_H
