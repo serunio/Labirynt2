@@ -25,8 +25,9 @@ int main()
     //0 - góra, 1 - prawo, 2 - dół, 3 - lewo
     int zwrot = 4003;
     int droga = 0;
+    printf("START\n");
     DFS(in, xLabiryntu, aktywnaKomorka, zwrot, &droga, matrix);
-    printf("FORWARD %i \n", droga);
+    printf("FORWARD %i \nSTOP\n", droga);
 
 
     fclose(in);
