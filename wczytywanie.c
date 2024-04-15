@@ -99,7 +99,7 @@ void PobierzWierszB(FILE* in, short* xyLabiryntu, short aktywnyWiersz, char** bu
     }
     fclose(out);
 
-    FILE* in2 = fopen("maze.txt", "rb");
+    FILE* in2 = fopen("f.txt", "rb");
     PobierzWiersz(in2, xyLabiryntu[0], 0, bufor);
 
     fclose(in2);
