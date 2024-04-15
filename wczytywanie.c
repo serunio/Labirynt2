@@ -38,3 +38,26 @@ int PobierzWysokosc(FILE* in)
     yLabiryntu /= 2;
     return yLabiryntu;
 }
+
+void PobierzDaneB(FILE* in, int* yxLabiryntu, int* yxStart, int* yxStop, long* counter)
+{
+    short bufor;
+
+    fseek(in, 5, SEEK_SET);
+    fread(&bufor, 2, 1, in);
+    bufor -= 1; bufor /= 2;
+    yxLabiryntu[1] = bufor;
+
+    fseek(in, 7, SEEK_SET);
+    fread(&bufor, 2, 1, in);
+    bufor -= 1; bufor /= 2;
+    yxLabiryntu[0] = bufor;
+
+    ///DO ZROBIENIA:
+    ///pobranie yxStart, yxStop i counter
+}
+
+void PobierzWierszB(FILE* in, int xLabiryntu, int aktywnyWiersz, char** bufor, long* counter)
+{
+    ///DO ZROBIENIA
+}
