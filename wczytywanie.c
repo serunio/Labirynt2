@@ -16,6 +16,8 @@ void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor)
     }
 }
 
+///DO ZROBIENIA
+///zastąpić PobierzSzerokość() i PobierzWysokość jedną funkcją PobierzWymiary()
 int PobierzSzerokosc(FILE* in)
 {
     int xLabiryntu = 0;

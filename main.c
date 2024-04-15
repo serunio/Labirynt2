@@ -6,9 +6,11 @@
 int main()
 {
     FILE* in = fopen("..\\maze.txt", "rb");
-
+    int x = PobierzSzerokosc(in);
     //pobranie wymiarów labiryntu (0:y, 1:x)
-    int yxLabiryntu[2] = {PobierzWysokosc(in), PobierzSzerokosc(in)};
+    int yxLabiryntu[2];
+    yxLabiryntu[0] = PobierzWysokosc(in);
+    yxLabiryntu[1] = x;
 
     //macierz buforujaca czesc labiryntu, w ktorej:
     //y - komorki w rzedzie
