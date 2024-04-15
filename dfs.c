@@ -6,40 +6,41 @@
 #include "wczytywanie.h"
 #include <stdio.h>
 
-int DFS(FILE* f, int xLabiryntu, int* yxAktywnaKomorka, int zwrot, int* droga, char** wiersz)
+int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* droga, char** wiersz, char tryb)
 {
-
-    PobierzWiersz(f, xLabiryntu, yxAktywnaKomorka[0], wiersz);
-    int x = yxAktywnaKomorka[1], y = yxAktywnaKomorka[0], zwrot0 = zwrot;
-    if (wiersz[ yxAktywnaKomorka[1] ][ 3 ] == 'P')
-    {
-        //printf("[%d %d] ", x, y);
-        return 1;
-    }
+    if(tryb=='t')
+        PobierzWiersz(f, xyLabiryntu[0], xyAktywnaKomorka[1], wiersz);
+    else if(tryb=='b')
+        PobierzWierszB(f, xyLabiryntu, xyAktywnaKomorka[1], wiersz);
+    else return 0;
+    short x = xyAktywnaKomorka[0], y = xyAktywnaKomorka[1];
+    int zwrot0 = zwrot;
 
     //obrot w prawo
     zwrot++;
 
     for(int i = 0; i<=2; i++)
     {
-        if (wiersz[yxAktywnaKomorka[1]][zwrot % 4] == ' ')
+        if (wiersz[ xyAktywnaKomorka[0] ][ zwrot % 4 ] == 'P')
+            return 1;
+        if (wiersz[xyAktywnaKomorka[0]][zwrot % 4] == ' ')
         {
             switch(zwrot%4)
             {
                 case 0:
-                    yxAktywnaKomorka[0]--;
+                    xyAktywnaKomorka[1]--;
                     break;
                 case 1:
-                    yxAktywnaKomorka[1]++;
+                    xyAktywnaKomorka[0]++;
                     break;
                 case 2:
-                    yxAktywnaKomorka[0]++;
+                    xyAktywnaKomorka[1]++;
                     break;
                 case 3:
-                    yxAktywnaKomorka[1]--;
+                    xyAktywnaKomorka[0]--;
                     break;
             }
-            if(DFS(f, xLabiryntu, yxAktywnaKomorka, zwrot, droga, wiersz))
+            if(DFS(f, xyLabiryntu, xyAktywnaKomorka, zwrot, droga, wiersz, tryb))
             {
                 (*droga)++;
                 //printf("%i ", *droga);
@@ -63,8 +64,11 @@ int DFS(FILE* f, int xLabiryntu, int* yxAktywnaKomorka, int zwrot, int* droga, c
                 //printf("[%d %d] ", x, y);
                 return 1;
             }
-            yxAktywnaKomorka[0]=y; yxAktywnaKomorka[1]=x;
-            PobierzWiersz(f, xLabiryntu, yxAktywnaKomorka[0], wiersz);
+            xyAktywnaKomorka[1]=y; xyAktywnaKomorka[0]=x;
+            if(tryb=='t')
+                PobierzWiersz(f, xyLabiryntu[0], xyAktywnaKomorka[1], wiersz);
+            else if(tryb=='b')
+                PobierzWierszB(f, xyLabiryntu, xyAktywnaKomorka[1], wiersz);
         }
 
         //obrót w lewo

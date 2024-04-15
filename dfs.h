@@ -7,5 +7,5 @@
 
 #include <stdio.h>
 
-int DFS(FILE* f, int xLabiryntu, int* yxAktywnaKomorka, int zwrot, int* drogaOdZakretu, char** wiersz);
+int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* drogaOdZakretu, char** wiersz, char tryb);
 #endif //LABIRYNT2_DFS_H

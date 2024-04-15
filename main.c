@@ -3,36 +3,52 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main()
+int main(int argc, char** argv)
 {
-    FILE* in = fopen("..\\maze.txt", "rb");
-    int x = PobierzSzerokosc(in);
-    //pobranie wymiarów labiryntu (0:y, 1:x)
-    int yxLabiryntu[2];
-    yxLabiryntu[0] = PobierzWysokosc(in);
-    yxLabiryntu[1] = x;
+    char tryb = argc > 2 ? argv[1][0] : 0;
+    FILE* in = argc > 2 ? fopen(argv[2], "rb") : NULL;
+    if(in==NULL || (tryb!='b'&&tryb!='t'))
+    {
+        printf("Niepoprawne argumenty\n");
+        return 1;
+    }
+    short* xyLabiryntu = malloc(2*sizeof(short));
+    short* xyStart = malloc(2*sizeof(short));
+    short* xyStop = malloc(2*sizeof(short));
+    char path;
+    long counter;
+
+    if(tryb=='b')
+        PobierzDaneB(in, xyLabiryntu, xyStart, xyStop, &counter, &path);
+
+    if(tryb=='t')
+        //pobranie wymiarów labiryntu (0:x, 1:y)
+        xyLabiryntu = PobierzWymiary(in);
 
     //macierz buforujaca czesc labiryntu, w ktorej:
     //y - komorki w rzedzie
-    char** matrix = malloc(yxLabiryntu[1]*sizeof(char*));
-    for(int i = 0; i < yxLabiryntu[1]; i++)
+    char** matrix = malloc(xyLabiryntu[0] * sizeof(char*));
+    for(int i = 0; i < xyLabiryntu[0]; i++)
         //x - informacja o tym w ktora strone mozna przejsc:
         //góra, prawo, lewo, dół
         matrix[i] = malloc(4*sizeof(char));
 
-    int yxAktywnaKomorka[2] = {yxLabiryntu[0] - 1, yxLabiryntu[1] - 1}; //położenie y,x
+    short xyAktywnaKomorka[2] = {(short)(xyLabiryntu[0] - 1), (short)(xyLabiryntu[1] - 1)}; //położenie x,y
 
     //reszta z dzielenia przez 4 ze zwrot to kierunek w którym patrzy program
     //0 - góra, 1 - prawo, 2 - dół, 3 - lewo
     int zwrot = 4003;
     int droga = 0;
     printf("START\n");
-    DFS(in, yxLabiryntu[1], yxAktywnaKomorka, zwrot, &droga, matrix);
+    DFS(in, xyLabiryntu, xyAktywnaKomorka, zwrot, &droga, matrix, tryb);
     printf("FORWARD %i \nSTOP\n", droga);
 
 
     fclose(in);
-    for(int i = 0; i < yxLabiryntu[1]; i++)
+    for(int i = 0; i < xyLabiryntu[0]; i++)
         free(matrix[i]);
     free(matrix);
+    free(xyLabiryntu);
+    free(xyStop);
+    free(xyStart);
 }

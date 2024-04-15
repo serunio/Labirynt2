@@ -20,11 +20,11 @@
 		USTAW_PRZEJSCIE(i,2);/*dół*/\
 	}
 
+short* PobierzWymiary(FILE* in);
 void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor);
-int PobierzSzerokosc(FILE* in);
-int PobierzWysokosc(FILE* in);
 
-void PobierzDaneB(FILE* in, int* yxLabiryntu, int* yxStart, int* yxStop, long* counter);
-void PobierzWierszB(FILE* in, int xLabiryntu, int aktywnyWiersz, char** bufor, long* counter);
+
+void PobierzDaneB(FILE* in, short* xyLabiryntu, short* xyStart, short* xyStop, long* counter, char* path);
+void PobierzWierszB(FILE* in, short* xyLabiryntu, short aktywnyWiersz, char** bufor);
 
 #endif //LABIRYNT2_WCZYTYWANIE_H
