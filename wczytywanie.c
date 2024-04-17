@@ -5,16 +5,8 @@
 #include "wczytywanie.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
-void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor)
-{
-    fseek(f, 2*(1+2*aktywnyWiersz)*(xLabiryntu+1)+2, SEEK_SET);
-    for(int i = 0; i < xLabiryntu; i++)
-    {
-        ZAPISZ_SASIADOW(i)
-        fseek(f, xLabiryntu*-2, SEEK_CUR);
-    }
-}
 
 short* PobierzWymiary(FILE* in)
 {
@@ -45,62 +37,172 @@ void PobierzDaneB(FILE* in, short* xyLabiryntu, short* xyStart, short* xyStop, l
     xyLabiryntu[1] -= 1; xyLabiryntu[1] /= 2;
     fread(xyStart, 2, 2, in);
     fread(xyStop, 2, 2, in);
-    xyStart[0]++; xyStart[0] /= 2; xyStart[1] /= 2;
-    xyStop[0] /= 2; xyStop[1] /= 2;
     fseek(in, 12, SEEK_CUR);
     fread(counter, 4, 1, in);
     fseek(in, 6, SEEK_CUR);
     fread(path, 1, 1, in);
 }
 
-void PobierzWierszB(FILE* in, short* xyLabiryntu, short aktywnyWiersz, char** bufor)
+FILE* Konwertuj(FILE* in)
 {
+    short xyLabiryntu[2], xyStart[2], xyStop[2], xyKursor[2] = {1, 1};
+    long counter;
     FILE* out = fopen("f.txt", "w");
-    fseek(in, 40, SEEK_SET);
-    int symboleWWierszu = xyLabiryntu[0] * 2 + 1;
+    fseek(in, 5, SEEK_SET);
+    fread(xyLabiryntu, 2, 2, in);
+    fread(xyStart, 2, 2, in);
+    fread(xyStop, 2, 2, in);
+    fseek(in, 12, SEEK_CUR);
+    fread(&counter, 4, 1, in);
+
+    fseek(in, 7, SEEK_CUR);
+    char symbol;
+    unsigned char iloscSymboliWSlowie;
+
+
+    while(counter)
+    {
+        fseek(in, 1, SEEK_CUR);
+        fread(&symbol, 1, 1, in);
+        fread(&iloscSymboliWSlowie, 1, 1, in);
+
+        for(int i = 0; i <= iloscSymboliWSlowie; i++)
+        {
+            if(xyKursor[0]==xyStart[0]&&xyKursor[1]==xyStart[1])
+                fprintf(out, "P");
+            else if(xyKursor[0]==xyStop[0]&&xyKursor[1]==xyStop[1])
+                fprintf(out, "K");
+            else
+                fprintf(out, "%c", symbol);
+
+            if(xyKursor[0]==xyLabiryntu[0])
+            {
+                xyKursor[0] = 1;
+                fprintf(out, "\n");
+                xyKursor[1]++;
+            }
+            else
+            xyKursor[0]++;
+        }
+        counter--;
+    }
+    fclose(in);
+    fclose(out);
+    in = fopen("f.txt", "rb");
+    return in;
+}
+
+void PobierzWierszT(FILE* f, int xLabiryntu, int aktywnyWiersz, char** matrix, char** bufor)
+{
+
+    int symboleWWierszu = xLabiryntu*2 + 1;
+    int target = (symboleWWierszu+1)*2*aktywnyWiersz;
+    fseek(f, target, SEEK_SET);
+
+    for(int i = 0; i < 3; i++)
+    {
+        fread(bufor[i], 1, symboleWWierszu, f);
+        fgetc(f);
+    }
+    ZapiszWiersz(bufor, matrix, xLabiryntu);
+
+}
+
+void PobierzWierszB(FILE* in, int xLabiryntu, int aktywnyWiersz, char** matrix, char** bufor)
+{
+
+    short xyStart[2];
+    short xyStop[2];
+    fseek(in, 9, SEEK_SET);
+    fread(xyStart, 2, 2, in);
+    fread(xyStop, 2, 2, in);
+    fseek(in, 23, SEEK_CUR);
+    int symboleWWierszu = xLabiryntu * 2 + 1;
     int przebyteSymbole = 0;
-    unsigned char symboleWSlowie;
+    unsigned char iloscSymboliWSlowie;
     int target = aktywnyWiersz*2*symboleWWierszu;
     char symbol;
+    int indeksX = 0, indeksY = 0;
+
+    long start = clock();
     while(przebyteSymbole < target)
     {
         fseek(in, 2, SEEK_CUR);
-        fread(&symboleWSlowie, 1, 1, in);
-        przebyteSymbole += symboleWSlowie + 1;
+        fread(&iloscSymboliWSlowie, 1, 1, in);
+        przebyteSymbole += iloscSymboliWSlowie + 1;
     }
-    if(target < przebyteSymbole)
+    long end = clock();
+    printf("%ld ", end - start);
+
+
+    if(przebyteSymbole > target)
     {
         fseek(in, -2, SEEK_CUR);
         fread(&symbol, 1, 1, in);
         for(int j = 0; j < przebyteSymbole - target; j++)
         {
-            fprintf(out, "%c", symbol);
+            if(indeksX==xyStart[0]-1 && 2*aktywnyWiersz+indeksY == xyStart[1]-1)
+                bufor[indeksY][indeksX] = 'P';
+            else if(indeksX==xyStop[0]-1 && 2*aktywnyWiersz+indeksY == xyStop[1]-1)
+                bufor[indeksY][indeksX] = 'K';
+            else
+                bufor[indeksY][indeksX] = symbol;
+            indeksX++;
+            if(indeksX==symboleWWierszu-1)
+                {indeksX=0; indeksY++;}
         }
         fgetc(in);
     }
+    przebyteSymbole -= target;
     target = 3*symboleWWierszu;
-    przebyteSymbole = 0;
+
     while(przebyteSymbole < target)
     {
         fseek(in, 1, SEEK_CUR);
         fread(&symbol, 1, 1, in);
-        fread(&symboleWSlowie, 1, 1, in);
-
-        for(int i = 0; i <= symboleWSlowie; i++)
+        fread(&iloscSymboliWSlowie, 1, 1, in);
+        for(int i = 0; i <= iloscSymboliWSlowie; i++)
         {
-            fprintf(out, "%c",
-                    aktywnyWiersz==0 && przebyteSymbole==symboleWWierszu ? 'P'
-                    : aktywnyWiersz==xyLabiryntu[1]-1 && przebyteSymbole==2*symboleWWierszu-1 ? 'K'
-                    : symbol);
+            if(indeksX==xyStart[0]-1 && 2*aktywnyWiersz+indeksY == xyStart[1]-1)
+                bufor[indeksY][indeksX] = 'P';
+            else if(indeksX==xyStop[0]-1 && 2*aktywnyWiersz+indeksY == xyStop[1]-1)
+                bufor[indeksY][indeksX] = 'K';
+            else
+                bufor[indeksY][indeksX] = symbol;
+            indeksX++;
+            if(indeksX==symboleWWierszu)
+            {indeksX=0; indeksY++;}
             przebyteSymbole++;
-            if(!(przebyteSymbole%symboleWWierszu))
-                fprintf(out, "\n");
         }
     }
-    fclose(out);
+//    FILE* out = fopen("f.txt", "w");
+//    for(int j = 0; j < 3; j++)
+//    {
+//        for(int i = 0; i < symboleWWierszu; i++)
+//        {
+//            fprintf(out, "%c", bufor[j][i]);
+//        }
+//        fprintf(out, "\n");
+//    }
+//    fclose(out);
+    ZapiszWiersz(bufor, matrix, xLabiryntu);
 
-    FILE* in2 = fopen("f.txt", "rb");
-    PobierzWiersz(in2, xyLabiryntu[0], 0, bufor);
 
-    fclose(in2);
+}
+void ZapiszWiersz(char** bufor, char** matrix, int xLabiryntu)
+{
+    for(int i=0; i < xLabiryntu; i++)
+    {
+        matrix[i][0] = bufor[0][2*i+1];
+        matrix[i][1] = bufor[1][2*i+2];
+        matrix[i][2] = bufor[2][2*i+1];
+        matrix[i][3] = bufor[1][2*i];
+    }
+//    for(int i = 0; i < xLabiryntu; i++)
+//    {
+//        printf("%3d ", i);
+//        for(int j = 0; j < 4; j++)
+//            printf("%c ", matrix[i][j]);
+//        printf("\n");
+//    }
 }

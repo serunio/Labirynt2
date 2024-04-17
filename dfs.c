@@ -6,13 +6,17 @@
 #include "wczytywanie.h"
 #include <stdio.h>
 
-int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* droga, char** wiersz, char tryb)
+int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* droga, char** matrix, char** bufor, char tryb)
 {
-    if(tryb=='t')
-        PobierzWiersz(f, xyLabiryntu[0], xyAktywnaKomorka[1], wiersz);
-    else if(tryb=='b')
-        PobierzWierszB(f, xyLabiryntu, xyAktywnaKomorka[1], wiersz);
-    else return 0;
+    //printf("[%d, %d] ", xyAktywnaKomorka[0], xyAktywnaKomorka[1]);
+    if(zwrot%2 == 0)
+    {
+        if (tryb == 't')
+            PobierzWierszT(f, xyLabiryntu[0], xyAktywnaKomorka[1], matrix, bufor);
+        else if (tryb == 'b')
+            PobierzWierszB(f, xyLabiryntu[0], xyAktywnaKomorka[1], matrix, bufor);
+        else return 0;
+    }
     short x = xyAktywnaKomorka[0], y = xyAktywnaKomorka[1];
     int zwrot0 = zwrot;
 
@@ -21,9 +25,9 @@ int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* dr
 
     for(int i = 0; i<=2; i++)
     {
-        if (wiersz[ xyAktywnaKomorka[0] ][ zwrot % 4 ] == 'P')
+        if (matrix[ xyAktywnaKomorka[0] ][zwrot % 4 ] == 'P')
             return 1;
-        if (wiersz[xyAktywnaKomorka[0]][zwrot % 4] == ' ')
+        if (matrix[xyAktywnaKomorka[0]][zwrot % 4] == ' ')
         {
             switch(zwrot%4)
             {
@@ -40,7 +44,7 @@ int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* dr
                     xyAktywnaKomorka[0]--;
                     break;
             }
-            if(DFS(f, xyLabiryntu, xyAktywnaKomorka, zwrot, droga, wiersz, tryb))
+            if(DFS(f, xyLabiryntu, xyAktywnaKomorka, zwrot, droga, matrix, bufor, tryb))
             {
                 (*droga)++;
                 //printf("%i ", *droga);
@@ -66,9 +70,9 @@ int DFS(FILE* f, short* xyLabiryntu, short* xyAktywnaKomorka, int zwrot, int* dr
             }
             xyAktywnaKomorka[1]=y; xyAktywnaKomorka[0]=x;
             if(tryb=='t')
-                PobierzWiersz(f, xyLabiryntu[0], xyAktywnaKomorka[1], wiersz);
+                PobierzWierszT(f, xyLabiryntu[0], xyAktywnaKomorka[1], matrix, bufor);
             else if(tryb=='b')
-                PobierzWierszB(f, xyLabiryntu, xyAktywnaKomorka[1], wiersz);
+                PobierzWierszB(f, xyLabiryntu[0], xyAktywnaKomorka[1], matrix, bufor);
         }
 
         //obrót w lewo

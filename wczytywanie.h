@@ -7,24 +7,13 @@
 
 #include <stdio.h>
 
-//nie musisz rozumiec tego
-#define USTAW_PRZEJSCIE(i,j) bufor[i][j] = fgetc(f)
-#define ZAPISZ_SASIADOW(i)\
-	{\
-		USTAW_PRZEJSCIE(i,1);/*prawo*/\
-		fseek(f, -3, SEEK_CUR);\
-		USTAW_PRZEJSCIE(i,3);/*lewo*/\
-		fseek(f, xLabiryntu*-2-2, SEEK_CUR);\
-		USTAW_PRZEJSCIE(i,0);/*góra*/\
-		fseek(f, xLabiryntu*4+3, SEEK_CUR);\
-		USTAW_PRZEJSCIE(i,2);/*dół*/\
-	}
-
 short* PobierzWymiary(FILE* in);
-void PobierzWiersz(FILE* f, int xLabiryntu, int aktywnyWiersz, char** bufor);
-
 
 void PobierzDaneB(FILE* in, short* xyLabiryntu, short* xyStart, short* xyStop, long* counter, char* path);
-void PobierzWierszB(FILE* in, short* xyLabiryntu, short aktywnyWiersz, char** bufor);
+FILE* Konwertuj(FILE* in);
+
+void PobierzWierszT(FILE* f, int xLabiryntu, int aktywnyWiersz, char** matrix, char** bufor);
+void ZapiszWiersz(char** bufor, char** matrix, int xLabiryntu);
+void PobierzWierszB(FILE* in, int xLabiryntu, int aktywnyWiersz, char** matrix, char** bufor);
 
 #endif //LABIRYNT2_WCZYTYWANIE_H
